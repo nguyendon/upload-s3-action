@@ -6,6 +6,14 @@ const shortid = require('shortid');
 const klawSync = require('klaw-sync');
 const { lookup } = require('mime-types');
 
+const VALID_ACLS = ['private',
+                    'public-read-write',
+                    'public-read-write',
+                    'authenticated-read',
+                    'aws-exec-read',
+                    'bucket-owner-read',
+                    'bucket-owner-full-control',
+                   ];
 const AWS_KEY_ID = core.getInput('aws_key_id', {
   required: true
 });
@@ -21,12 +29,22 @@ const SOURCE_DIR = core.getInput('source_dir', {
 const DESTINATION_DIR = core.getInput('destination_dir', {
   required: false
 });
+const ACL = core.getInput('acl', {
+  required: false
+});
 
 const s3 = new S3({
   accessKeyId: AWS_KEY_ID,
   secretAccessKey: SECRET_ACCESS_KEY
 });
 const destinationDir = DESTINATION_DIR === '/' ? shortid() : DESTINATION_DIR;
+const acl = !ACL ? 'private' : ACL;
+if (!VALID_ACLS.includes(acl)) {
+  const errString = `Invalid ACL: ${acl}`;
+  core.error(Error(errString));
+  core.setFailed(errString);
+}
+
 const paths = klawSync(SOURCE_DIR, {
   nodir: true
 });
@@ -50,7 +68,7 @@ function run() {
       const bucketPath = path.join(destinationDir, path.relative(sourceDir, p.path));
       const params = {
         Bucket: BUCKET,
-        ACL: 'public-read',
+        ACL: acl,
         Body: fileStream,
         Key: bucketPath,
         ContentType: lookup(p.path) || 'text/plain'
