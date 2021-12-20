@@ -38,7 +38,7 @@ const s3 = new S3({
   secretAccessKey: SECRET_ACCESS_KEY
 });
 const destinationDir = DESTINATION_DIR === '/' ? shortid() : DESTINATION_DIR;
-const acl = !ACL ? 'private' : ACL;
+const acl = !ACL ? 'authenticated-read' : ACL;
 if (!VALID_ACLS.includes(acl)) {
   const errString = `Invalid ACL: ${acl}`;
   core.error(Error(errString));
