@@ -65,7 +65,8 @@ function run() {
   return Promise.all(
     paths.map(p => {
       const fileStream = fs.createReadStream(p.path);
-      const bucketPath = path.join(destinationDir, path.relative(sourceDir, p.path));
+      let bucketPath = path.join(destinationDir, path.relative(sourceDir, p.path));
+      bucketPath = bucketPath.replace(/\\/g, '/');
       const params = {
         Bucket: BUCKET,
         ACL: acl,
