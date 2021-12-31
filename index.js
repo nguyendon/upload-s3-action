@@ -7,7 +7,7 @@ const klawSync = require('klaw-sync');
 const { lookup } = require('mime-types');
 
 const VALID_ACLS = ['private',
-                    'public-read-write',
+                    'public-read',
                     'public-read-write',
                     'authenticated-read',
                     'aws-exec-read',
