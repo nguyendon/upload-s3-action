@@ -2465,7 +2465,7 @@ const klawSync = __webpack_require__(502);
 const { lookup } = __webpack_require__(779);
 
 const VALID_ACLS = ['private',
-                    'public-read-write',
+                    'public-read',
                     'public-read-write',
                     'authenticated-read',
                     'aws-exec-read',
@@ -2496,7 +2496,7 @@ const s3 = new S3({
   secretAccessKey: SECRET_ACCESS_KEY
 });
 const destinationDir = DESTINATION_DIR === '/' ? shortid() : DESTINATION_DIR;
-const acl = !ACL ? 'authenticated-read' : ACL;
+const acl = !ACL ? 'bucket-owner-full-control' : ACL;
 if (!VALID_ACLS.includes(acl)) {
   const errString = `Invalid ACL: ${acl}`;
   core.error(Error(errString));
